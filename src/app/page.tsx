@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, Variants, AnimatePresence } from "framer-motion";
 import {
   FileSignature,
   Stamp,
@@ -16,6 +17,8 @@ import {
   ShieldCheck,
   Award,
   CheckCircle2,
+  Phone,
+  Mail
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -44,6 +47,75 @@ const staggerContainer: Variants = {
   },
 };
 
+function ContactDropdown({ children, isHeader = false }: { children: React.ReactNode, isHeader?: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative inline-block" ref={dropdownRef}>
+      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+        {children}
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`absolute ${isHeader ? 'right-0' : 'left-0'} mt-3 w-72 bg-[#151e32] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[100]`}
+          >
+            <div className="p-4 space-y-4">
+              <div>
+                <div className="text-xs font-semibold text-brand-slate uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Phone className="w-3 h-3" /> Ara
+                </div>
+                <div className="flex flex-col gap-1">
+                  <a href="tel:+905435136713" className="text-sm font-medium text-white hover:text-brand-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5">+90 543 513 67 13</a>
+                  <a href="tel:+905426961732" className="text-sm font-medium text-white hover:text-brand-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5">+90 542 696 17 32</a>
+                </div>
+              </div>
+              
+              <div className="h-px bg-white/10" />
+
+              <div>
+                <div className="text-xs font-semibold text-[#25D366] uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <MessageCircle className="w-3 h-3" /> Whatsapp
+                </div>
+                <div className="flex flex-col gap-1">
+                  <a href="https://wa.me/905435136713" target="_blank" className="text-sm font-medium text-white hover:text-[#25D366] transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5">+90 543 513 67 13</a>
+                  <a href="https://wa.me/905426961732" target="_blank" className="text-sm font-medium text-white hover:text-[#25D366] transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5">+90 542 696 17 32</a>
+                </div>
+              </div>
+
+              <div className="h-px bg-white/10" />
+
+              <div>
+                <div className="text-xs font-semibold text-brand-slate uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Mail className="w-3 h-3" /> E-posta Gönder
+                </div>
+                <a href="mailto:huseyinyakin.13@gmail.com" className="text-sm font-medium text-white hover:text-brand-accent transition-colors py-1.5 px-3 rounded-xl hover:bg-white/5 block truncate">
+                  huseyinyakin.13@gmail.com
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <>
@@ -70,15 +142,12 @@ export default function Home() {
                 </button>
               </li>
               <li>
-                <Link
-                  href="https://wa.me/905426961732"
-                  target="_blank"
-                  className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-brand-accent hover:bg-brand-accent-hover rounded-full transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:shadow-[0_0_25px_rgba(56,189,248,0.5)]"
-                  aria-label="WhatsApp üzerinden iletişime geçin"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  İletişime Geç
-                </Link>
+                <ContactDropdown isHeader>
+                  <div className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-brand-accent hover:bg-brand-accent-hover rounded-full transition-all shadow-[0_0_15px_rgba(56,189,248,0.3)] hover:shadow-[0_0_25px_rgba(56,189,248,0.5)]">
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    İletişime Geç
+                  </div>
+                </ContactDropdown>
               </li>
             </ul>
           </nav>
@@ -135,15 +204,12 @@ export default function Home() {
                 </motion.p>
 
                 <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <Link
-                    href="https://wa.me/905426961732"
-                    target="_blank"
-                    className="group relative inline-flex items-center justify-center px-8 py-4 text-sm font-semibold text-white transition-all duration-300 bg-gradient-to-r from-brand-accent to-blue-600 rounded-2xl hover:scale-105 hover:shadow-[0_10px_30px_rgba(56,189,248,0.4)]"
-                    aria-label="WhatsApp Destek Hattı 1'e mesaj gönderin"
-                  >
-                    Hemen İletişime Geçin
-                    <MessageCircle className="w-5 h-5 ml-2 transition-transform group-hover:-rotate-12" />
-                  </Link>
+                  <ContactDropdown>
+                    <div className="group relative inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 text-sm font-semibold text-white transition-all duration-300 bg-gradient-to-r from-brand-accent to-blue-600 rounded-2xl hover:scale-105 hover:shadow-[0_10px_30px_rgba(56,189,248,0.4)]">
+                      Hemen İletişime Geçin
+                      <MessageCircle className="w-5 h-5 ml-2 transition-transform group-hover:-rotate-12" />
+                    </div>
+                  </ContactDropdown>
                   <Link
                     href="https://maps.app.goo.gl/PAGrYNVDjLYAd2tbA"
                     target="_blank"
@@ -190,7 +256,7 @@ export default function Home() {
                     <div className="bg-green-500/20 p-2 rounded-lg text-green-400">
                       <ShieldCheck className="w-5 h-5" />
                     </div>
-                    <span className="font-semibold text-sm">%100 Güvenilir Süreç</span>
+                    <span className="font-semibold text-sm">Vize Danışmanlık</span>
                   </motion.div>
 
                   <motion.div
@@ -219,14 +285,28 @@ export default function Home() {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeInUp}
-              className="text-center mb-20"
+              className="mb-20"
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-                Hizmetlerimiz
-              </h2>
-              <p className="text-lg text-brand-muted max-w-2xl mx-auto leading-relaxed">
-                Tüm yurt dışı ve resmi işlemlerinizde profesyonel destek sağlıyoruz. İhtiyacınıza yönelik sunduğumuz çözümler:
-              </p>
+              <div className="text-center">
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+                  Hizmetlerimiz
+                </h2>
+                <p className="text-lg text-brand-muted max-w-2xl mx-auto leading-relaxed mb-10">
+                  Tüm yurt dışı ve resmi işlemlerinizde profesyonel destek sağlıyoruz. İhtiyacınıza yönelik sunduğumuz çözümler:
+                </p>
+              </div>
+
+              <div className="bg-[#151e32]/50 border border-white/10 p-6 md:p-8 rounded-3xl max-w-4xl mx-auto backdrop-blur-sm shadow-xl">
+                <h4 className="text-xl font-bold text-brand-accent mb-4 flex items-center gap-3">
+                  <div className="p-2 bg-brand-accent/10 rounded-lg">
+                    <ShieldCheck className="w-5 h-5 text-brand-accent" />
+                  </div>
+                  Şeffaf & Birebir Süreç Yönetimi
+                </h4>
+                <p className="text-brand-muted leading-relaxed text-sm md:text-base">
+                  Ofisimizde hiçbir bot, otomatik yazılım veya aracı yazılım kullanılmaz. Başvuru, çeviri ve randevu süreçlerinizin tamamı uzman ekibimiz tarafından bizzat yürütülür ve adım adım manuel olarak takip edilir. Tüm evraklarınızın eksiksiz ve en güncel konsolosluk mevzuatına uygun hazırlanmasını sağlarız. Gerçek dışı, yanıltıcı veya imkansız vaatlerde bulunmaz; yalnızca şeffaf, güvenilir ve profesyonel rehberlik sunarız.
+                </p>
+              </div>
             </motion.div>
 
             <motion.div
@@ -313,10 +393,10 @@ export default function Home() {
                 <motion.div variants={fadeInUp} className="space-y-4">
                   <h3 className="text-xl font-bold text-white mb-4 pl-2">Hızlı İletişim Hatları</h3>
                   <Link
-                    href="https://wa.me/905426961732"
+                    href="https://wa.me/905435136713"
                     target="_blank"
                     className="flex items-center justify-between p-5 bg-[#151e32]/50 backdrop-blur-md border border-white/5 rounded-2xl hover:border-[#25D366]/50 hover:bg-[#25D366]/5 transition-all duration-300 group"
-                    aria-label="WhatsApp Destek Hattı 1"
+                    aria-label="WhatsApp İletişim 1"
                   >
                     <div className="flex items-center">
                       <div className="w-12 h-12 rounded-2xl bg-[#25D366]/10 flex items-center justify-center text-[#25D366] mr-5 relative">
@@ -324,18 +404,18 @@ export default function Home() {
                         <div className="absolute inset-0 rounded-2xl animate-ping bg-[#25D366]/20" />
                       </div>
                       <div>
-                        <span className="block font-bold text-white group-hover:text-[#25D366] transition-colors">Destek Hattı 1</span>
-                        <span className="text-sm text-brand-muted">+90 542 696 17 32</span>
+                        <span className="block font-bold text-white group-hover:text-[#25D366] transition-colors">Whatsapp İletişim</span>
+                        <span className="text-sm text-brand-muted">+90 543 513 67 13</span>
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-brand-slate group-hover:text-[#25D366] transition-transform group-hover:translate-x-1" />
                   </Link>
                   
                   <Link
-                    href="https://wa.me/905435136713"
+                    href="https://wa.me/905426961732"
                     target="_blank"
                     className="flex items-center justify-between p-5 bg-[#151e32]/50 backdrop-blur-md border border-white/5 rounded-2xl hover:border-[#25D366]/50 hover:bg-[#25D366]/5 transition-all duration-300 group"
-                    aria-label="WhatsApp Destek Hattı 2"
+                    aria-label="WhatsApp İletişim 2"
                   >
                     <div className="flex items-center">
                       <div className="w-12 h-12 rounded-2xl bg-[#25D366]/10 flex items-center justify-center text-[#25D366] mr-5 relative">
@@ -343,8 +423,8 @@ export default function Home() {
                         <div className="absolute inset-0 rounded-2xl animate-ping bg-[#25D366]/20" />
                       </div>
                       <div>
-                        <span className="block font-bold text-white group-hover:text-[#25D366] transition-colors">Destek Hattı 2</span>
-                        <span className="text-sm text-brand-muted">+90 543 513 67 13</span>
+                        <span className="block font-bold text-white group-hover:text-[#25D366] transition-colors">Whatsapp İletişim</span>
+                        <span className="text-sm text-brand-muted">+90 542 696 17 32</span>
                       </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-brand-slate group-hover:text-[#25D366] transition-transform group-hover:translate-x-1" />
