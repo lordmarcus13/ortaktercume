@@ -1,27 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-mauve: #cba6f7;
-  --color-sapphire: #74c7ec;
-  --color-surface: #1e1e2e;
-  --color-surface-hover: #313244;
-  --color-bg: #0d1117;
-  --color-text-main: #cdd6f4;
-  --color-text-muted: #a6adc8;
-  
+  --color-brand-blue: #0b1120; /* Ultra deep navy */
+  --color-brand-blue-light: #151e32; /* Slightly lighter navy for cards */
+  --color-brand-accent: #38bdf8; /* Light sky blue */
+  --color-brand-accent-hover: #0284c7; /* Sky blue */
+  --color-brand-slate: #64748b; /* Slate for muted elements */
+  --color-brand-text: #ffffff; /* Crisp white */
+  --color-brand-muted: #94a3b8; /* Muted text */
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
   body {
-    background-color: var(--color-bg);
-    color: var(--color-text-main);
+    background-color: var(--color-brand-blue);
+    color: var(--color-brand-text);
     font-family: var(--font-sans);
   }
   
   ::selection {
-    background-color: rgba(203, 166, 247, 0.3);
-    color: var(--color-mauve);
+    background-color: rgba(56, 189, 248, 0.3);
+    color: var(--color-brand-text);
   }
 }
 
